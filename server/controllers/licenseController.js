@@ -1,12 +1,27 @@
 const License = require('../models/License');
 
 // Get all licenses (for all users)
-exports.getLicenses = async (req, res) => {
+exports.getPaginatedLicenses = async (req, res) => {
   try {
-    const licenses = await License.find().populate('createdBy', 'name email');
-    res.json(licenses);
-  } catch (err) {
-    res.status(500).json({ msg: 'Server error', error: err.message });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    const total = await License.countDocuments();
+    const licenses = await License.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      licenses,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch licenses' });
   }
 };
 
