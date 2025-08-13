@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import AddLicenseModal from './AddLicenseModal';
 
 /** Helper: safely parse JWT payload (role, id, etc.) */
 function parseJwt(token) {
+  if (!token) return null;
+
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+
   try {
-    const base64 = token.split('.')[1];
-    const jsonPayload = Buffer.from(base64, 'base64').toString('utf-8');
+    const base64Url = parts[1];
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+
+    while (base64.length % 4) {
+      base64 += '=';
+    }
+
+    const jsonPayload = atob(base64);
     return JSON.parse(jsonPayload);
-  } catch {
+  } catch (e) {
     return null;
   }
 }
-
-
-/** Helper: get first available field name from license */
-const getField = (obj, names, fallback = '—') => {
-  for (const n of names) if (obj && obj[n] !== undefined && obj[n] !== null) return obj[n];
-  return fallback;
-};
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -28,13 +33,15 @@ export default function Dashboard() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [limit] = useState(5); // items per page
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   // get token & role
   const token = localStorage.getItem('token');
+  
   const decoded = parseJwt(token);
   const role = decoded?.role || 'user';
-
+  
   useEffect(() => {
     if (!token) {
       navigate('/login');
@@ -53,7 +60,7 @@ export default function Dashboard() {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = res.data;
-      setLicenses(data.licenses || []);
+      setLicenses(data.licenses || []);      
       setTotalPages(data.totalPages || 1);
     } catch (err) {
       console.error('Failed to fetch licenses:', err?.response?.data || err.message);
@@ -91,13 +98,14 @@ export default function Dashboard() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">License Dashboard</h1>
+        
         {role === 'admin' && (
-          <button
-            onClick={() => navigate('/licenses/new')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Add License
-          </button>
+         <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+        >
+          + Add License
+        </button>
         )}
       </div>
 
@@ -128,12 +136,11 @@ export default function Dashboard() {
               </tr>
             ) : (
               licenses.map((lic) => {
-                const product = getField(lic, ['productName', 'name', 'product']);
-                const key = getField(lic, ['licenseKey', 'key', 'license']);
-                const expiry = getField(lic, ['expirationDate', 'expiryDate', 'expiry']);
-                const createdBy = typeof lic.createdBy === 'object'
-                  ? (lic.createdBy.name || lic.createdBy.email || lic.createdBy._id)
-                  : lic.createdBy;
+
+                const product = lic.productName
+                const key = lic.licenseKey
+                const expiry = lic.expiryDate
+                const createdBy = lic.createdBy.name
 
                 return (
                   <tr key={lic._id} className="border-t">
@@ -193,6 +200,13 @@ export default function Dashboard() {
           Next
         </button>
       </div>
+
+
+       <AddLicenseModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onLicenseAdded={fetchLicenses}
+      />
     </div>
   );
 }

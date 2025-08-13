@@ -12,7 +12,8 @@ exports.getPaginatedLicenses = async (req, res) => {
     const licenses = await License.find()
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .populate('createdBy', 'name'); // <-- populate createdBy with only the name field
 
     res.status(200).json({
       total,
@@ -28,7 +29,7 @@ exports.getPaginatedLicenses = async (req, res) => {
 // Add a new license (admin only)
 exports.createLicense = async (req, res) => {
   try {
-    const { productName, licenseKey, expirationDate } = req.body;
+    const { productName, licenseKey, expiryDate } = req.body;
 
     const existing = await License.findOne({ licenseKey });
     if (existing) return res.status(400).json({ msg: 'License key already exists' });
@@ -36,7 +37,7 @@ exports.createLicense = async (req, res) => {
     const license = await License.create({
       productName,
       licenseKey,
-      expirationDate,
+      expiryDate,
       createdBy: req.user.id
     });
 
@@ -52,6 +53,23 @@ exports.updateLicense = async (req, res) => {
     const { id } = req.params;
     const updated = await License.findByIdAndUpdate(id, req.body, { new: true });
     res.json(updated);
+  } catch (err) {
+    res.status(500).json({ msg: 'Server error', error: err.message });
+  }
+};
+
+// Delete license (admin only)
+exports.deleteLicense = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await License.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ msg: 'License not found' });
+    }
+
+    res.json({ msg: 'License deleted successfully' });
   } catch (err) {
     res.status(500).json({ msg: 'Server error', error: err.message });
   }
