@@ -22,8 +22,8 @@ export default function Navbar() {
           {token ? (
             <>
               <span className="text-sm">Hi, {user?.name || user?.username || user?.email || 'User'}</span>
-              <span className="text-xs px-2 py-1 bg-gray-700 rounded">{user?.role || 'user'}</span>
-              <Link to="/dashboard" className="hover:underline">Dashboard</Link>
+              {/* <span className="text-xs px-2 py-1 bg-gray-700 rounded">{user?.role || 'user'}</span>
+              <Link to="/dashboard" className="hover:underline">Dashboard</Link> */}
               <button onClick={handleLogout} className="bg-red-500 px-3 py-1 rounded">Logout</button>
             </>
           ) : (

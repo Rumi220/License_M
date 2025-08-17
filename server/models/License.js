@@ -11,4 +11,18 @@ const licenseSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
+// Virtual field for status
+licenseSchema.virtual('status').get(function () {
+  const now = new Date();
+  const diffDays = Math.ceil((this.expiryDate - now) / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return 'Expired';
+  if (diffDays <= 7) return 'Expiring Soon';
+  return 'Active';
+});
+
+// Ensure virtuals are included in JSON outputs
+licenseSchema.set('toJSON', { virtuals: true });
+licenseSchema.set('toObject', { virtuals: true });
+
 module.exports = mongoose.model('License', licenseSchema);
