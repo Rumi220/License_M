@@ -29,14 +29,15 @@ exports.getPaginatedLicenses = async (req, res) => {
 // Add a new license (admin only)
 exports.createLicense = async (req, res) => {
   try {
-    const { productName, licenseKey, expiryDate } = req.body;
+    const { clientName, productName, startDate, expiryDate } = req.body;
 
-    const existing = await License.findOne({ licenseKey });
-    if (existing) return res.status(400).json({ msg: 'License key already exists' });
+    // const existing = await License.findOne({ licenseKey });
+    // if (existing) return res.status(400).json({ msg: 'License key already exists' });
 
     const license = await License.create({
+      clientName,
       productName,
-      licenseKey,
+      startDate,
       expiryDate,
       createdBy: req.user.id
     });

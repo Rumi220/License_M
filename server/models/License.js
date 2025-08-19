@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 const licenseSchema = new mongoose.Schema({
+  clientName: { type: String, required: true },
   productName: { type: String, required: true },
-  licenseKey: { type: String, required: true, unique: true },
+  startDate: { type: Date, required: true },
   expiryDate: { type: Date, required: true },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
