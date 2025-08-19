@@ -48,7 +48,7 @@ export default function Dashboard() {
   };
 
   // get token & role
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const decoded = parseJwt(token);
   const role = decoded?.role || "user";
@@ -88,7 +88,7 @@ export default function Dashboard() {
         (err.response.status === 401 || err.response.status === 403)
       ) {
         alert("Session expired or unauthorized. Please login again.");
-        localStorage.removeItem("token");
+        sessionStorage.removeItem("token");
         navigate("/login");
       }
     } finally {

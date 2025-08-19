@@ -20,20 +20,20 @@ function parseJwt(token) {
 }
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+  const [token, setToken] = useState(() => sessionStorage.getItem(TOKEN_KEY));
   const [user, setUser] = useState(() => {
-  const userJson = localStorage.getItem('user');
+  const userJson = sessionStorage.getItem('user');
   return userJson ? JSON.parse(userJson) : null;
 });
   const [loading, setLoading] = useState(false);
 
 useEffect(() => {
   if (token && user) {
-    localStorage.setItem(TOKEN_KEY, token);
-    localStorage.setItem('user', JSON.stringify(user));
+    sessionStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.setItem('user', JSON.stringify(user));
   } else {
-    localStorage.removeItem(TOKEN_KEY);
-    localStorage.removeItem('user');
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem('user');
     setUser(null);
   }
 }, [token, user]);
@@ -42,8 +42,8 @@ useEffect(() => {
  const login = ({ tokenValue, userData }) => {
   setToken(tokenValue);
   setUser(userData);
-  localStorage.setItem(TOKEN_KEY, tokenValue);
-  localStorage.setItem('user', JSON.stringify(userData));
+  sessionStorage.setItem(TOKEN_KEY, tokenValue);
+  sessionStorage.setItem('user', JSON.stringify(userData));
 };
 
   const logout = () => setToken(null);

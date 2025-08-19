@@ -18,7 +18,7 @@ export default function Login() {
       const res = await axios.post(`${API_BASE}/api/auth/login`, { email, password });      
       
       if (res.data?.token) {
-        login({ tokenValue: res.data.token, userData: res.data.user });          // saves to context & localStorage
+        login({ tokenValue: res.data.token, userData: res.data.user });          // saves to context & sessionStorage
         navigate('/dashboard');         // go to dashboard
       } else {
         setErr('Invalid response from server');

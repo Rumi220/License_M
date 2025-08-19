@@ -8,7 +8,7 @@ function StatsCards({ tracker }) {
   const [licenses, setLicenses] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 useEffect(() => {
   let isMounted = true;
   setLoading(true);

@@ -1,8 +1,7 @@
 // src/components/AddLicenseModal.jsx
 import { useState } from "react";
 import axios from "axios";
-// import "react-datepicker/dist/react-datepicker.css";
-// import DatePicker from "react-datepicker";
+
 
 export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
   const [formData, setFormData] = useState({
@@ -21,7 +20,7 @@ export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
     e.preventDefault();
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
       await axios.post("http://localhost:5000/api/licenses", formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
