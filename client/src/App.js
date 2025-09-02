@@ -4,6 +4,7 @@ import Register from './components/Register';
 import Login from './components/Login'; 
 import Dashboard from './components/Dashboard'; 
 import ProtectedRoute from './components/ProtectedRoute';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard/></ProtectedRoute>} />
       </Routes>
+      <Footer/>
     </Router>
   );
 }

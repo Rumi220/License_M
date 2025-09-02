@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-datepicker";
 
 export default function EditLicenseModal({
   isOpen,
@@ -12,8 +13,11 @@ export default function EditLicenseModal({
   const [formData, setFormData] = useState({
     clientName: "",
     productName: "",
+    customerPODate: "",
     startDate: "",
     expiryDate: "",
+    details: "",
+    reminder: 0,
   });
 
   useEffect(() => {
@@ -21,8 +25,13 @@ export default function EditLicenseModal({
       setFormData({
         clientName: license.clientName,
         productName: license.productName,
+        customerPODate: license.customerPODate
+          ? license.customerPODate.split("T")[0]
+          : "",
         startDate: license.startDate ? license.startDate.split("T")[0] : "",
         expiryDate: license.expiryDate ? license.expiryDate.split("T")[0] : "",
+        details: license.details,
+        reminder: license.reminder,
       });
     }
   }, [license]);
@@ -93,21 +102,40 @@ export default function EditLicenseModal({
 
           <div className="flex flex-col mb-4">
             <label
+              htmlFor="customerPODate"
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              Customer PO Date
+            </label>
+            <input
+              id="customerPODate"
+              type="date"
+              name="customerPODate"
+              value={formData.customerPODate}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Select customer po date"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col mb-4">
+            <label
               htmlFor="startDate"
               className="mb-1 text-sm font-medium text-gray-700"
             >
               Start Date
             </label>
             <input
-    id="startDate"
-    type="date"
-    name="startDate"
-    value={formData.startDate}
-    onChange={handleChange}
-    className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    placeholder="Select start date"
-    required
-  /> 
+              id="startDate"
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Select start date"
+              required
+            />
           </div>
 
           <div className="flex flex-col mb-4">
@@ -117,16 +145,56 @@ export default function EditLicenseModal({
             >
               End Date
             </label>
+            <DatePicker
+              id="expiryDate"
+              selected={
+                formData.expiryDate ? new Date(formData.expiryDate) : null
+              }
+              onChange={(date) =>
+                setFormData({
+                  ...formData,
+                  expiryDate: date ? date.toISOString().split("T")[0] : "",
+                })
+              }
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholderText="Select end date"
+              dateFormat="yyyy-MM-dd"
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label
+              htmlFor="details"
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              Details
+            </label>
             <input
-  id="expiryDate"
-  type="date"
-  name="expiryDate"
-  value={formData.expiryDate}
-  onChange={handleChange}
-  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-  placeholder="Select end date"
-  required
-/>
+              id="details"
+              type="text"
+              name="details"
+              placeholder="Enter details"
+              value={formData.details}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <div className="flex flex-col mb-4">
+            <label
+              htmlFor="reminder"
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              Reminder
+            </label>
+            <input
+              id="reminder"
+              type="text"
+              name="reminder"
+              placeholder="Enter reminder"
+              value={formData.reminder}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
           </div>
 
           <div className="flex justify-end space-x-2 pt-2">

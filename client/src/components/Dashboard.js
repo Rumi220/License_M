@@ -38,10 +38,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [limit] = useState(5); // items per page
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const navigate = useNavigate();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedLicense, setSelectedLicense] = useState(null);
+  const [search, setSearch] = useState("");
 
+  const navigate = useNavigate();
   const openEditModal = (license) => {
     setSelectedLicense(license);
     setEditModalOpen(true);
@@ -61,17 +62,16 @@ export default function Dashboard() {
     }
     fetchLicenses(page);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  }, [page, search]);
 
   const fetchLicenses = async (pageNumber = 1) => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${API_BASE}/api/licenses?page=${pageNumber}&limit=${limit}`,
+        `${API_BASE}/api/licenses?page=${pageNumber}&limit=${limit}&search=${search}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const data = res.data;
-      console.log(data.licenses);
       setLicenses(data.licenses || []);
       setTotalPages(data.totalPages || 1);
       if (pageNumber === 1) {
@@ -112,37 +112,75 @@ export default function Dashboard() {
 
   return (
     <div className="py-8 px-4 sm:px-8 md:px-16 lg:px-32 lg:py-16 xl:px-64 xl:py-16 ">
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-8 px-8 py-8 bg-white rounded-2xl shadow-md border border-gray-200">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-800">
-          Dashboard
-        </h1>
-
-        {/* Add License Button for Admins */}
-        {role === "admin" && (
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="mt-4 sm:mt-0 px-5 py-2 flex items-center bg-green-600 text-white font-medium rounded-lg shadow hover:bg-green-700 transition-colors duration-200"
-          >
-            <svg
-              className="w-5 h-5 mr-2"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4v16m8-8H4"
-              ></path>
-            </svg>
-            Add License
-          </button>
-        )}
+      <div className="w-full bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 text-white text-center rounded-xl shadow-lg p-16 mb-6">
+        <h2 className="text-3xl font-bold">
+          NHQ Distributions Ltd. Licensing Portal
+        </h2>
+        <p className="mt-1 text-sm opacity-90">
+          Manage licenses, track clients, and keep everything organized in one.
+        </p>
       </div>
 
-      <StatsCards tracker={tracker} />
+      <div className="p-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 px-6 sm:px-8 py-6 bg-white rounded-3xl shadow-md border border-gray-100 transition-all duration-300">
+          {/* Dashboard Title */}
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 tracking-tight">
+            Dashboard
+          </h1>
+
+          {/* Add License Button for Admins */}
+          {role === "admin" && (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="mt-4 sm:mt-0 px-5 py-2 flex items-center bg-green-600 text-white font-medium rounded-xl shadow-md hover:bg-green-700 hover:shadow-lg transition-all duration-200"
+            >
+              <svg
+                className="w-5 h-5 mr-2"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4v16m8-8H4"
+                ></path>
+              </svg>
+              Add License
+            </button>
+          )}
+        </div>
+
+        <StatsCards tracker={tracker} />
+      </div>
+
+      {/* 🔍 Search Bar */}
+      <div
+        className="flex px-4 py-3 mb-4 rounded-md border-2 overflow-hidden w-full lg:w-1/2 mx-auto 
+                hover:border-blue-300 focus-within:border-blue-300 
+                transition-colors duration-200"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 192.904 192.904"
+          width="16px"
+          className="fill-gray-600 mr-3 rotate-90"
+        >
+          <path d="m190.707 180.101-47.078-47.077c11.702-14.072 18.752-32.142 18.752-51.831C162.381 36.423 125.959 0 81.191 0 36.422 0 0 36.423 0 81.193c0 44.767 36.422 81.187 81.191 81.187 19.688 0 37.759-7.049 51.831-18.751l47.079 47.078a7.474 7.474 0 0 0 5.303 2.197 7.498 7.498 0 0 0 5.303-12.803zM15 81.193C15 44.694 44.693 15 81.191 15c36.497 0 66.189 29.694 66.189 66.193 0 36.496-29.692 66.187-66.189 66.187C44.693 147.38 15 117.689 15 81.193z"></path>
+        </svg>
+        <input
+          type="text"
+          placeholder="Search by client or product..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1); // reset to page 1
+          }}
+          className="w-full outline-none bg-transparent text-gray-600 text-sm"
+        />
+      </div>
 
       <div className="bg-white rounded shadow overflow-x-auto">
         <table className="min-w-full text-left text-sm divide-y divide-gray-200">
@@ -155,6 +193,9 @@ export default function Dashboard() {
                 Product
               </th>
               <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
+                Customer PO Date
+              </th>
+              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
                 Start Date
               </th>
               <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
@@ -162,6 +203,12 @@ export default function Dashboard() {
               </th>
               <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
                 Status
+              </th>
+              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
+                Details
+              </th>
+              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
+                Reminder
               </th>
               {role === "admin" && (
                 <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
@@ -194,19 +241,27 @@ export default function Dashboard() {
               licenses.map((lic) => {
                 const product = lic.productName;
                 const client = lic.clientName;
+                const customerPODate = lic.customerPODate
                 const start = lic.startDate;
                 const expiry = lic.expiryDate;
                 const status = lic.status;
+                const details = lic.details;
+                const reminder = lic.reminder;
+                console.log(reminder);
+                
 
                 return (
                   <tr key={lic._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 break-words">{client}</td>
                     <td className="px-6 py-4 break-words">{product}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {start ? new Date(start).toLocaleDateString() : "—"}
+                      {customerPODate ? new Date(customerPODate).toLocaleDateString() : "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      {expiry ? new Date(expiry).toLocaleDateString() : "—"}
+                      {start ? new Date(start).toLocaleDateString() : "-"}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {expiry ? new Date(expiry).toLocaleDateString() : "-"}
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -222,6 +277,8 @@ export default function Dashboard() {
                         {status}
                       </span>
                     </td>
+                    <td className="px-6 py-4 break-words">{details ? details : "-"}</td>
+                    <td className="px-6 py-4 break-words">{reminder}</td>
                     {role === "admin" && (
                       <td className="px-3 py-4">
                         {" "}
@@ -276,6 +333,8 @@ export default function Dashboard() {
           Next
         </button>
       </div>
+
+      
 
       <AddLicenseModal
         isOpen={isModalOpen}

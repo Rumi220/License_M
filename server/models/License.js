@@ -3,8 +3,11 @@ const mongoose = require('mongoose');
 const licenseSchema = new mongoose.Schema({
   clientName: { type: String, required: true },
   productName: { type: String, required: true },
+  customerPODate: { type: Date, required: true }, //new
   startDate: { type: Date, required: true },
   expiryDate: { type: Date, required: true },
+  details: { type: String }, //new
+  reminder: {type: Number}, //new
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -18,7 +21,7 @@ licenseSchema.virtual('status').get(function () {
   const diffDays = Math.ceil((this.expiryDate - now) / (1000 * 60 * 60 * 24));
 
   if (diffDays < 0) return 'Expired';
-  if (diffDays <= 7) return 'Expiring Soon';
+  if (diffDays <= 60) return 'Expiring Soon';
   return 'Active';
 });
 
