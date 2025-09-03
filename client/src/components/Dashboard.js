@@ -201,14 +201,15 @@ export default function Dashboard() {
               <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
                 End Date
               </th>
-              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
-                Status
-              </th>
-              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
+              
+              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700 max-w-sm">
                 Details
               </th>
               <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
                 Reminder
+              </th>
+              <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
+                Status
               </th>
               {role === "admin" && (
                 <th className="px-6 py-4 whitespace-nowrap font-medium text-gray-700">
@@ -263,6 +264,9 @@ export default function Dashboard() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       {expiry ? new Date(expiry).toLocaleDateString() : "-"}
                     </td>
+                    
+                    <td className="px-6 py-4 break-words max-w-sm">{details ? details : "-"}</td>
+                    <td className="px-6 py-4 break-words">{reminder}</td>
                     <td className="px-6 py-4">
                       <span
                         className={`inline-block px-3 py-1 text-sm font-medium rounded-full
@@ -277,8 +281,6 @@ export default function Dashboard() {
                         {status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 break-words">{details ? details : "-"}</td>
-                    <td className="px-6 py-4 break-words">{reminder}</td>
                     {role === "admin" && (
                       <td className="px-3 py-4">
                         {" "}
