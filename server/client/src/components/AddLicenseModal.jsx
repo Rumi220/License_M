@@ -1,14 +1,17 @@
 // src/components/AddLicenseModal.jsx
 import { useState } from "react";
 import axios from "axios";
-
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
   const [formData, setFormData] = useState({
     clientName: "",
     productName: "",
+    customerPODate: "",
     startDate: "",
     expiryDate: "",
+    details: "",
+    reminder: 0,
   });
   const [loading, setLoading] = useState(false);
 
@@ -29,8 +32,11 @@ export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
       setFormData({
         clientName: "",
         productName: "",
+        customerPODate: "",
         startDate: "",
         expiryDate: "",
+        details: "",
+        reminder: 0,
       });
     } catch (err) {
       console.error(err);
@@ -85,21 +91,39 @@ export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
           </div>
           <div className="flex flex-col mb-4">
             <label
+              htmlFor="customerPODate"
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              Customer PO Date
+            </label>
+            <input
+              id="customerPODate"
+              type="date"
+              name="customerPODate"
+              value={formData.customerPODate}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Select customer po date"
+              required
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label
               htmlFor="startDate"
               className="mb-1 text-sm font-medium text-gray-700"
             >
               Start Date
             </label>
             <input
-    id="startDate"
-    type="date"
-    name="startDate"
-    value={formData.startDate}
-    onChange={handleChange}
-    className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-    placeholder="Select start date"
-    required
-  /> 
+              id="startDate"
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Select start date"
+              required
+            />
           </div>
           <div className="flex flex-col mb-4">
             <label
@@ -108,18 +132,51 @@ export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
             >
               End Date
             </label>
-
             <input
-  id="expiryDate"
-  type="date"
-  name="expiryDate"
-  value={formData.expiryDate}
-  onChange={handleChange}
-  className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-  placeholder="Select end date"
-  required
-/>
+              id="expiryDate"
+              type="date"
+              name="expiryDate"
+              value={formData.expiryDate}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Select end date"
+              required
+            />
           </div>
+          <div className="flex flex-col mb-4">
+            <label
+              htmlFor="details"
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              Details
+            </label>
+            <input
+              id="details"
+              type="text"
+              name="details"
+              placeholder="Enter details"
+              value={formData.details}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+          {/* <div className="flex flex-col mb-4">
+            <label
+              htmlFor="reminder"
+              className="mb-1 text-sm font-medium text-gray-700"
+            >
+              Reminder
+            </label>
+            <input
+              id="reminder"
+              type="text"
+              name="reminder"
+              placeholder="Enter reminder"
+              value={formData.reminder}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            />
+          </div> */}
           <div className="flex justify-end gap-2 pt-4">
             <button
               type="button"
