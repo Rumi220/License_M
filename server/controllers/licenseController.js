@@ -5,11 +5,21 @@ exports.getPaginatedLicenses = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-
+    const search = req.query.search || "";
     const skip = (page - 1) * limit;
 
-    const total = await License.countDocuments();
-    const licenses = await License.find()
+    // Build a filter
+    const filter = search
+      ? {
+          $or: [
+            { clientName: { $regex: search, $options: "i" } }, // case-insensitive
+            { productName: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const total = await License.countDocuments(filter);
+    const licenses = await License.find(filter)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -29,16 +39,16 @@ exports.getPaginatedLicenses = async (req, res) => {
 // Add a new license (admin only)
 exports.createLicense = async (req, res) => {
   try {
-    const { clientName, productName, startDate, expiryDate } = req.body;
-
-    // const existing = await License.findOne({ licenseKey });
-    // if (existing) return res.status(400).json({ msg: 'License key already exists' });
+    const { clientName, productName, customerPODate, startDate, expiryDate, details, reminder } = req.body;
 
     const license = await License.create({
       clientName,
       productName,
+      customerPODate,
       startDate,
       expiryDate,
+      details,
+      reminder,
       createdBy: req.user.id
     });
 
