@@ -20,7 +20,7 @@ app.use(express.json({ limit: '10kb' })); // Handle JSON input
 
 // Prevent too many requests from same IP
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs:  60 * 1000, // 15 minutes
   max: 100
 });
 app.use(limiter);
