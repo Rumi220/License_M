@@ -59,7 +59,7 @@ export default function EditLicenseModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white rounded-2xl px-10 py-6 w-96 shadow-lg">
+      <div className="h-screen overflow-scroll bg-white rounded-2xl px-10 py-6 w-96 shadow-lg">
         <h2 className="text-xl text-center font-semibold mb-4">Edit License</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="flex flex-col mb-4">

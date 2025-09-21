@@ -111,7 +111,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="py-8 px-4 sm:px-8 md:px-16 lg:px-32 lg:py-16 xl:px-64 xl:py-16 ">
+    <div className=" py-8 px-4 sm:px-8 md:px-16 lg:px-32 lg:py-16 xl:px-64 xl:py-16 ">
       <div className="w-full bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 text-white text-center rounded-xl shadow-lg p-16 mb-6">
         <h2 className="text-3xl font-bold">
           NHQ Distributions Ltd. Licensing Portal

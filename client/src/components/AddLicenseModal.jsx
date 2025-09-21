@@ -50,7 +50,7 @@ export default function AddLicenseModal({ isOpen, onClose, onLicenseAdded }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white px-10 py-6 rounded-xl w-96 shadow-lg">
+      <div className="h-screen overflow-scroll bg-white px-10 py-6 rounded-xl w-96 shadow-lg">
         <h2 className="text-xl text-center font-bold mb-4">Add New License</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="flex flex-col mb-4">
