@@ -5,6 +5,9 @@ export default function Navbar() {
   const { token, user, logout } = useAuth();
   const navigate = useNavigate();
 
+  console.log(user);
+  
+
   const handleLogout = () => {
     logout();
     navigate("/login");

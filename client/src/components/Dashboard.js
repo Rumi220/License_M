@@ -248,7 +248,6 @@ export default function Dashboard() {
                 const status = lic.status;
                 const details = lic.details;
                 const reminder = lic.reminder;
-                console.log(reminder);
                 
 
                 return (
